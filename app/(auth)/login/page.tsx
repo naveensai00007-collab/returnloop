@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { MagicLinkSchema } from "@/lib/validation";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/dashboard";
 
@@ -60,6 +60,80 @@ export default function LoginPage() {
   };
 
   return (
+    <Card className="shadow-md">
+      {isSuccess ? (
+        <div className="text-center py-4 space-y-4">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-subtle text-primary">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-neutral-900">
+              Check your email
+            </h3>
+            <p className="text-sm text-neutral-600">
+              We sent a magic login link to{" "}
+              <span className="font-semibold text-neutral-900">{email}</span>.
+            </p>
+          </div>
+          <p className="text-xs text-neutral-500 pt-2">
+            Click the link in your email to sign in instantly without a password.
+          </p>
+          <div className="pt-2">
+            <Button
+              variant="tertiary"
+              size="sm"
+              onClick={() => {
+                setIsSuccess(false);
+                setEmail("");
+              }}
+              className="text-xs"
+            >
+              Did not get it? Try again
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <CardHeader className="text-left px-0 pt-0">
+            <CardTitle className="text-xl">Sign in to ReturnLoop</CardTitle>
+            <CardDescription>
+              Enter your email address to receive a secure login link.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-0 pb-0">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                label="Email address"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (error) setError(null);
+                }}
+                error={error || undefined}
+                disabled={isLoading}
+                autoFocus
+                required
+              />
+              <Button
+                type="submit"
+                className="w-full gap-2 font-medium"
+                isLoading={isLoading}
+              >
+                <Mail className="w-4 h-4" />
+                Send me login link
+              </Button>
+            </form>
+          </CardContent>
+        </>
+      )}
+    </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 bg-surface">
       <div className="w-full max-w-sm">
         {/* Brand Header */}
@@ -91,76 +165,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Card Body */}
-        <Card className="shadow-md">
-          {isSuccess ? (
-            <div className="text-center py-4 space-y-4">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary-subtle text-primary">
-                <CheckCircle2 className="w-6 h-6" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold text-neutral-900">
-                  Check your email
-                </h3>
-                <p className="text-sm text-neutral-600">
-                  We sent a magic login link to{" "}
-                  <span className="font-semibold text-neutral-900">{email}</span>.
-                </p>
-              </div>
-              <p className="text-xs text-neutral-500 pt-2">
-                Click the link in your email to sign in instantly without a password.
-              </p>
-              <div className="pt-2">
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                  onClick={() => {
-                    setIsSuccess(false);
-                    setEmail("");
-                  }}
-                  className="text-xs"
-                >
-                  Did not get it? Try again
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <CardHeader className="text-left px-0 pt-0">
-                <CardTitle className="text-xl">Sign in to ReturnLoop</CardTitle>
-                <CardDescription>
-                  Enter your email address to receive a secure login link.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-0 pb-0">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <Input
-                    label="Email address"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      if (error) setError(null);
-                    }}
-                    error={error || undefined}
-                    disabled={isLoading}
-                    autoFocus
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full gap-2 font-medium"
-                    isLoading={isLoading}
-                  >
-                    <Mail className="w-4 h-4" />
-                    Send me login link
-                  </Button>
-                </form>
-              </CardContent>
-            </>
-          )}
-        </Card>
+        {/* Suspense wrapper for useSearchParams */}
+        <React.Suspense fallback={<div className="h-64 rounded-card bg-white animate-pulse" />}>
+          <LoginForm />
+        </React.Suspense>
 
         {/* Footer Link */}
         <div className="mt-6 text-center">

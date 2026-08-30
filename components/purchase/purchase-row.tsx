@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, Package, Edit2, CalendarDays, Store, AlertCircle } from "lucide-react";
+import { Check, Package, Edit2, CalendarDays, Store } from "lucide-react";
 import { PurchaseWithStore } from "@/types/purchase";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,7 +27,8 @@ export function PurchaseRow({
   const formattedAmount = purchase.amount ? formatCurrency(purchase.amount, purchase.currency) : null;
 
   return (
-    <div
+    <article
+      aria-label={`Purchase from ${storeName}`}
       className={`group relative flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 rounded-card border border-border bg-white shadow-sm transition-all duration-150 hover:border-neutral-300 ${
         purchase.status !== "active" ? "opacity-75 bg-neutral-50/50" : ""
       }`}
@@ -35,6 +36,7 @@ export function PurchaseRow({
       {/* Left side: Store, Item, and Meta */}
       <div className="flex items-start gap-3.5 w-full sm:w-auto mb-3 sm:mb-0">
         <div
+          aria-hidden="true"
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border ${
             urgency.level === "overdue"
               ? "bg-red-50 border-red-200 text-semantic-error"
@@ -48,11 +50,11 @@ export function PurchaseRow({
 
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-neutral-900 text-base">
+            <h4 className="font-semibold text-neutral-900 text-base">
               {storeName}
-            </span>
+            </h4>
             {formattedAmount && (
-              <span className="text-sm font-medium text-neutral-600">
+              <span className="text-sm font-medium text-neutral-600" aria-label={`Amount: ${formattedAmount}`}>
                 {formattedAmount}
               </span>
             )}
@@ -66,8 +68,8 @@ export function PurchaseRow({
               </span>
             )}
             <span className="flex items-center gap-1">
-              <CalendarDays className="w-3.5 h-3.5" />
-              Deadline: {formattedDeadline}
+              <CalendarDays className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Deadline: {formattedDeadline}</span>
             </span>
           </div>
         </div>
@@ -82,10 +84,11 @@ export function PurchaseRow({
               variant="primary"
               onClick={() => onStatusChange(purchase.id, "returned")}
               disabled={isLoading}
-              className="gap-1 text-xs font-semibold px-3 py-1.5 h-9"
+              className="gap-1 text-xs font-semibold px-3.5 py-1.5 h-9"
+              aria-label={`Mark ${storeName} purchase as returned`}
               title="Mark item returned"
             >
-              <Check className="w-3.5 h-3.5" />
+              <Check className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Returned</span>
             </Button>
 
@@ -94,10 +97,11 @@ export function PurchaseRow({
               variant="secondary"
               onClick={() => onStatusChange(purchase.id, "kept")}
               disabled={isLoading}
-              className="gap-1 text-xs font-medium px-3 py-1.5 h-9 text-neutral-700"
+              className="gap-1 text-xs font-medium px-3.5 py-1.5 h-9 text-neutral-700"
+              aria-label={`Mark ${storeName} purchase as kept`}
               title="Keep item"
             >
-              <Package className="w-3.5 h-3.5" />
+              <Package className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Keep</span>
             </Button>
           </>
@@ -108,6 +112,7 @@ export function PurchaseRow({
             onClick={() => onStatusChange(purchase.id, "active")}
             disabled={isLoading}
             className="text-xs font-medium px-3 py-1.5 h-9"
+            aria-label={`Reactivate ${storeName} purchase`}
           >
             Reactivate
           </Button>
@@ -120,11 +125,11 @@ export function PurchaseRow({
           disabled={isLoading}
           className="p-2 h-9 w-9 text-neutral-500 hover:text-neutral-900"
           title="Edit details"
-          aria-label="Edit purchase details"
+          aria-label={`Edit ${storeName} purchase details`}
         >
-          <Edit2 className="w-4 h-4" />
+          <Edit2 className="w-4 h-4" aria-hidden="true" />
         </Button>
       </div>
-    </div>
+    </article>
   );
 }

@@ -174,15 +174,15 @@ export function ManualAddForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 text-left">
+    <form onSubmit={handleSubmit} className="space-y-6 text-left" noValidate>
       {/* Store Selection */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-neutral-900">
-          Store <span className="text-semantic-error">*</span>
-        </label>
+      <fieldset className="space-y-2">
+        <legend className="block text-sm font-medium text-neutral-900">
+          Store <span className="text-semantic-error" aria-hidden="true">*</span>
+        </legend>
 
         {/* Store Chips for recognition-first selection */}
-        <div className="flex flex-wrap gap-1.5 pb-1">
+        <div className="flex flex-wrap gap-1.5 pb-1" role="group" aria-label="Common store options">
           {POPULAR_STORES.map((s) => {
             const isSelected = selectedStoreId === s.id;
             return (
@@ -190,13 +190,14 @@ export function ManualAddForm({
                 key={s.id}
                 type="button"
                 onClick={() => handleSelectStore(s)}
+                aria-pressed={isSelected}
                 className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium border transition-colors ${
                   isSelected
                     ? "bg-primary text-white border-primary shadow-sm"
                     : "bg-white text-neutral-700 border-border hover:bg-neutral-50"
                 }`}
               >
-                {isSelected && <Check className="w-3.5 h-3.5" />}
+                {isSelected && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
                 {s.name}
               </button>
             );
@@ -204,13 +205,14 @@ export function ManualAddForm({
           <button
             type="button"
             onClick={handleSelectOtherStore}
+            aria-pressed={isCustomStore}
             className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium border transition-colors ${
               isCustomStore
                 ? "bg-primary text-white border-primary shadow-sm"
                 : "bg-white text-neutral-700 border-border hover:bg-neutral-50"
             }`}
           >
-            {isCustomStore && <Check className="w-3.5 h-3.5" />}
+            {isCustomStore && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
             Other store
           </button>
         </div>
@@ -233,10 +235,11 @@ export function ManualAddForm({
               }}
               error={errors.store}
               autoFocus={isCustomStore}
+              aria-label="Store name"
             />
           </div>
         )}
-      </div>
+      </fieldset>
 
       {/* Purchase Date */}
       <div className="space-y-1.5">
@@ -244,7 +247,7 @@ export function ManualAddForm({
           htmlFor="purchase-date-input"
           className="block text-sm font-medium text-neutral-900"
         >
-          Purchase Date <span className="text-semantic-error">*</span>
+          Purchase Date <span className="text-semantic-error" aria-hidden="true">*</span>
         </label>
         <div className="relative">
           <Input
@@ -260,17 +263,17 @@ export function ManualAddForm({
       </div>
 
       {/* Return Window */}
-      <div className="space-y-2">
+      <fieldset className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-neutral-900">
-            Return Window <span className="text-semantic-error">*</span>
-          </label>
+          <legend className="block text-sm font-medium text-neutral-900">
+            Return Window <span className="text-semantic-error" aria-hidden="true">*</span>
+          </legend>
           {selectedStoreId && (
             <Badge variant="estimate">Store policy estimate</Badge>
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Return window options">
           {COMMON_WINDOWS.map((days) => {
             const isSelected = !isCustomWindow && returnWindowDays === days;
             return (
@@ -281,6 +284,7 @@ export function ManualAddForm({
                   setReturnWindowDays(days);
                   setIsCustomWindow(false);
                 }}
+                aria-pressed={isSelected}
                 className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
                   isSelected
                     ? "bg-primary text-white border-primary shadow-sm"
@@ -294,6 +298,7 @@ export function ManualAddForm({
           <button
             type="button"
             onClick={() => setIsCustomWindow(true)}
+            aria-pressed={isCustomWindow}
             className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
               isCustomWindow
                 ? "bg-primary text-white border-primary shadow-sm"
@@ -317,30 +322,33 @@ export function ManualAddForm({
                 setReturnWindowDays(isNaN(val) ? 0 : val);
               }}
               error={errors.returnWindowDays}
+              aria-label="Custom return window in days"
             />
             <span className="text-sm text-neutral-500 shrink-0">days</span>
           </div>
         )}
-      </div>
+      </fieldset>
 
       {/* Live Deadline Preview Box */}
       {liveDeadline && (
-        <Card className="bg-primary-subtle border-green-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <CalendarDays className="w-5 h-5 text-primary shrink-0" />
-              <div>
-                <p className="text-xs font-medium text-neutral-600">
-                  Calculated Return Deadline
-                </p>
-                <p className="text-base font-bold text-primary">
-                  {liveDeadline}
-                </p>
+        <div aria-live="polite">
+          <Card className="bg-primary-subtle border-green-200 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <CalendarDays className="w-5 h-5 text-primary shrink-0" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-medium text-neutral-600">
+                    Calculated Return Deadline
+                  </p>
+                  <p className="text-base font-bold text-primary">
+                    {liveDeadline}
+                  </p>
+                </div>
               </div>
+              <Badge variant="verified">Live calculation</Badge>
             </div>
-            <Badge variant="verified">Live calculation</Badge>
-          </div>
-        </Card>
+          </Card>
+        </div>
       )}
 
       {/* Optional Details (Item Name & Amount) */}
