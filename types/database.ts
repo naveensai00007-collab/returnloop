@@ -40,6 +40,15 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey";
+            columns: ["id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       stores: {
         Row: {
@@ -72,6 +81,7 @@ export interface Database {
           verified?: boolean;
           created_at?: string;
         };
+        Relationships: [];
       };
       purchases: {
         Row: {
@@ -131,6 +141,22 @@ export interface Database {
           updated_at?: string;
           deleted_at?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: "purchases_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "stores";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "purchases_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       reminders: {
         Row: {
@@ -172,6 +198,22 @@ export interface Database {
           error?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "reminders_purchase_id_fkey";
+            columns: ["purchase_id"];
+            isOneToOne: false;
+            referencedRelation: "purchases";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reminders_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       ai_extractions: {
         Row: {
@@ -201,7 +243,23 @@ export interface Database {
           error?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "ai_extractions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: {
+      purchase_status: PurchaseStatus;
+      reminder_status: ReminderStatus;
+    };
+    CompositeTypes: Record<string, never>;
   };
 }
