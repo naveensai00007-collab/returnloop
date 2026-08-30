@@ -1,4 +1,7 @@
 import { UrgencyInfo, UrgencyLevel } from "@/types/purchase";
+import { formatDate } from "./utils";
+
+export { formatDate };
 
 /**
  * Returns today's date formatted as YYYY-MM-DD in UTC/local date space.
