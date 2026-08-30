@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Plus, RotateCcw, AlertTriangle, CheckCircle2, ShoppingBag } from "lucide-react";
+import { Plus, RotateCcw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { PurchaseWithStore } from "@/types/purchase";
 import { PurchaseRow } from "@/components/purchase/purchase-row";
 import { PurchaseRowSkeleton } from "@/components/ui/skeleton";
 import { PurchaseEditDrawer } from "@/components/purchase/purchase-edit-drawer";
 import { EmptyPurchases } from "@/components/dashboard/empty-purchases";
+import { RecoveredSummary } from "@/components/dashboard/recovered-summary";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/use-toast";
 import { getUrgency } from "@/lib/deadlines";
@@ -140,7 +141,6 @@ export function PurchaseList() {
       .sort((a, b) => {
         const urgA = getUrgency(a.return_deadline, a.status);
         const urgB = getUrgency(b.return_deadline, b.status);
-        // Overdue first (negative daysRemaining)
         return urgA.daysRemaining - urgB.daysRemaining;
       });
   }, [purchases]);
@@ -154,6 +154,11 @@ export function PurchaseList() {
 
   return (
     <div className="space-y-6 text-left">
+      {/* Recovered Amount Summary Header */}
+      {!isLoading && !error && purchases.length > 0 && (
+        <RecoveredSummary purchases={purchases} />
+      )}
+
       {/* Tab Filter Header */}
       <div className="flex items-center justify-between border-b border-border pb-3">
         <div className="flex items-center gap-2">
